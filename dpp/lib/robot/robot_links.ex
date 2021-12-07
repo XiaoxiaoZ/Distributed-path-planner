@@ -1,4 +1,4 @@
-defmodule ROBOT do
+defmodule ROBOT.LINKS do
     import SweetXml
 
 
@@ -24,8 +24,9 @@ defmodule ROBOT do
     
     def get_link_1(xmldoc) do
         link_name = 'link_1'
-        link_1_path=%SweetXpath{path: '//library_visual_scenes/visual_scene/node/node'}
         
+        link_1_path = get_link_path(link_name)
+
         result = get_link(xmldoc, link_1_path, link_name)
 
         frame = get_link_frame(xmldoc, link_1_path, link_name)
@@ -34,9 +35,8 @@ defmodule ROBOT do
     end
 
     def get_link_2(xmldoc) do
-        link_1_name = 'link_1'
         link_name = 'link_2'
-        link_2_path = %SweetXpath{path: '//library_visual_scenes/visual_scene/node/node/node[@name=\"'++link_1_name++'\"]'}
+        link_2_path=get_link_path(link_name)
         result = get_link(xmldoc, link_2_path, link_name)
         frame = get_link_frame(xmldoc, link_2_path, link_name)
         link_2 = %{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
@@ -44,51 +44,62 @@ defmodule ROBOT do
     end
 
     def get_link_3(xmldoc) do
-        link_1_name = 'link_1'
-        link_2_name = 'link_2'
         link_name = 'link_3'
-        link_3_path = %SweetXpath{path: '//library_visual_scenes/visual_scene/node/node/node[@name=\"'++link_1_name++'\"]/node[@name=\"'++link_2_name++'\"]'}
+        link_3_path = get_link_path(link_name)
         result = get_link(xmldoc, link_3_path, link_name)
         frame = get_link_frame(xmldoc, link_3_path, link_name)
         link_3 = %{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
     end
 
     def get_link_4(xmldoc) do
-        link_1_name = 'link_1'
-        link_2_name = 'link_2'
-        link_3_name = 'link_3'
         link_name = 'link_4'
-        link_4_path = %SweetXpath{path: '//library_visual_scenes/visual_scene/node/node/node[@name=\"'++link_1_name++'\"]/node[@name=\"'++link_2_name++'\"]/node[@name=\"'++link_3_name++'\"]'}
+        link_4_path = get_link_path(link_name)
         result = get_link(xmldoc, link_4_path, link_name)
         frame = get_link_frame(xmldoc, link_4_path, link_name)
         link_4 = %{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
     end
 
     def get_link_5(xmldoc) do
-        link_1_name = 'link_1'
-        link_2_name = 'link_2'
-        link_3_name = 'link_3'
-        link_4_name = 'link_4'
         link_name = 'link_5'
-        link_5_path = %SweetXpath{path: '//library_visual_scenes/visual_scene/node/node/node[@name=\"'++link_1_name++'\"]/node[@name=\"'++link_2_name++'\"]/node[@name=\"'++link_3_name++'\"]/node[@name=\"'++link_4_name++'\"]'}
+        link_5_path = get_link_path(link_name)
         result = get_link(xmldoc, link_5_path, link_name)
         frame = get_link_frame(xmldoc, link_5_path, link_name)
         link_5 = %{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
     end
 
     def get_link_6(xmldoc) do
-        link_1_name = 'link_1'
-        link_2_name = 'link_2'
-        link_3_name = 'link_3'
-        link_4_name = 'link_4'
-        link_5_name = 'link_5'
         link_name = 'link_6'
-        link_6_path = %SweetXpath{path: '//library_visual_scenes/visual_scene/node/node/node[@name=\"'++link_1_name++'\"]/node[@name=\"'++link_2_name++'\"]/node[@name=\"'++link_3_name++'\"]/node[@name=\"'++link_4_name++'\"]/node[@name=\"'++link_5_name++'\"]'}
+        link_6_path = get_link_path(link_name)
         result = get_link(xmldoc, link_6_path, link_name)
         frame = get_link_frame(xmldoc, link_6_path, link_name)
         link_6 = %{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
     end
 
+    def get_link_path(link) do
+        link_1_name = 'link_1'
+        link_2_name = 'link_2'
+        link_3_name = 'link_3'
+        link_4_name = 'link_4'
+        link_5_name = 'link_5'
+        link_6_name = 'link_6'
+        link_1_path = %SweetXpath{path: '//library_visual_scenes/visual_scene/node/node'}
+        link_2_path = %SweetXpath{path: '//library_visual_scenes/visual_scene/node/node/node[@name=\"'++link_1_name++'\"]'}
+        link_3_path = %SweetXpath{path: '//library_visual_scenes/visual_scene/node/node/node[@name=\"'++link_1_name++'\"]/node[@name=\"'++link_2_name++'\"]'}
+        link_4_path = %SweetXpath{path: '//library_visual_scenes/visual_scene/node/node/node[@name=\"'++link_1_name++'\"]/node[@name=\"'++link_2_name++'\"]/node[@name=\"'++link_3_name++'\"]'}
+        link_5_path = %SweetXpath{path: '//library_visual_scenes/visual_scene/node/node/node[@name=\"'++link_1_name++'\"]/node[@name=\"'++link_2_name++'\"]/node[@name=\"'++link_3_name++'\"]/node[@name=\"'++link_4_name++'\"]'}
+        link_6_path = %SweetXpath{path: '//library_visual_scenes/visual_scene/node/node/node[@name=\"'++link_1_name++'\"]/node[@name=\"'++link_2_name++'\"]/node[@name=\"'++link_3_name++'\"]/node[@name=\"'++link_4_name++'\"]/node[@name=\"'++link_5_name++'\"]'}
+        link_paths = [
+                        %{name: link_1_name, path: link_1_path},
+                        %{name: link_2_name, path: link_2_path},
+                        %{name: link_3_name, path: link_3_path},
+                        %{name: link_4_name, path: link_4_path},
+                        %{name: link_5_name, path: link_5_path},
+                        %{name: link_6_name, path: link_6_path}
+                     ]
+        link_paths
+        |> Enum.find(fn map -> map[:name] == link end)
+        |> Map.fetch!(:path)
+    end
 
     def get_link(xmldoc, link_path, link_name) do
         link_name_path = %SweetXpath{path: './node[@name=\"'++link_name++'\"]/@name'}
@@ -131,12 +142,19 @@ defmodule ROBOT do
         [r1 | r] = xmlresult[:rotates]
         [r2 | r_] = r
         [r3 | [r4]] = r_
+
+        
         frame = %{name: name,
                   rotate_axis_sid: xmlresult[:rotate_axis_sid], 
-                  frames: [%{translate: t1, rotate: r1}, 
-                           %{translate: t2, rotate: r2}, 
-                           %{translate: t3, rotate: r4}],
-                  rotate_axis: r3
+                  frames: [%{translate: charlist_to_flist(t1), rotate: charlist_to_flist(r1)}, 
+                           %{translate: charlist_to_flist(t2), rotate: charlist_to_flist(r2)}, 
+                           %{translate: charlist_to_flist(t3), rotate: charlist_to_flist(r4)}],
+                  rotate_axis: charlist_to_flist(r3)
                            }
+    end
+
+    def charlist_to_flist(charlist) do
+        pos_list_f = String.split(to_string(charlist))
+                        |> Enum.map(fn s -> Float.parse(s) |> elem(0) end) 
     end
 end

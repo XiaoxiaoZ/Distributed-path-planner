@@ -2,8 +2,10 @@ defmodule ColladaImportTest do
     use ExUnit.Case
     import COLLADA
     import SweetXml
-    import ROBOT
+    import ROBOT.LINKS
 
+
+@doc """
 
 
 
@@ -29,14 +31,7 @@ defmodule ColladaImportTest do
         
         link_1 = get_link_1(xmldoc)
 
-        frame_r = %{name: 'link_1',
-                    frames: [%{rotate: '1 0 0 0', translate: '-0 -0 -0'}, 
-                             %{rotate: '1 0 0 0', translate: '0 0 0.227'}, 
-                             %{rotate: '1 0 0 0', translate: '0 0 0'}], 
-                    rotate_axis: '0 0 1 0', 
-                    rotate_axis_sid: 'node_joint_1_axis0'}
-        assert link_1 == %{link_name: 'link_1', instance_geometry: '#gkmodel0_link_1_geom0', frame: frame_r, linked_links: ['link_2', 'link_cylinder']}
- 
+        assert link_1 == %{frame: %{frames: [%{rotate: '1 0 0 0', translate: '-0 -0 -0'}, %{rotate: '1 0 0 0', translate: '0 0 0.227'}, %{rotate: '1 0 0 0', translate: '0 0 0'}], name: 'link_1', rotate_axis: '0 0 1 0', rotate_axis_sid: 'node_joint_1_axis0'}, instance_geometry: ['#gkmodel0_link_1_geom0'], link_name: 'link_1', linked_links: ['link_2', 'link_cylinder']}
     end
      
     test "link 2 test" do
@@ -74,12 +69,30 @@ defmodule ColladaImportTest do
         assert link_5 == %{frame: %{frames: [%{rotate: '1 0 0 0', translate: '-0 -0 -0'}, %{rotate: '1 0 0 0', translate: '1.67 0 0'}, %{rotate: '1 0 0 0', translate: '0 0 0'}], name: 'link_5', rotate_axis: '0 1 0 0', rotate_axis_sid: 'node_joint_5_axis0'}, instance_geometry: ['#gkmodel0_link_5_geom0'], link_name: 'link_5', linked_links: ['link_6']}  
 
     end
+    """
 
     test "link 6 test" do
         {:ok, xmldoc} =import_robot("/test/irb6640.dae")
         
         link_6 = get_link_6(xmldoc)
 
-        assert link_6 == %{frame: %{frames: [%{rotate: '1 0 0 0', translate: '-0 -0 -0'}, %{rotate: '1 0 0 0', translate: '0.153 0 0'}, %{rotate: '1 0 0 0', translate: '0 0 0'}], name: 'link_6', rotate_axis: '1 0 0 0', rotate_axis_sid: 'node_joint_6_axis0'}, instance_geometry: ['#gkmodel0_link_6_geom0'], link_name: 'link_6', linked_links: ['tool0']}  
+        assert link_6 == %{frame: %{frames: [%{rotate: [1, 0, 0, 0], translate: [-0, -0, -0]}, %{rotate: [1, 0, 0, 0], translate: [0.153, 0, 0]}, %{rotate: [1, 0, 0, 0], translate: [0, 0, 0]}], name: 'link_6', rotate_axis: [1, 0, 0, 0], rotate_axis_sid: 'node_joint_6_axis0'}, instance_geometry: ['#gkmodel0_link_6_geom0'], link_name: 'link_6', linked_links: ['tool0']}  
+    end
+
+
+
+
+
+    test "Geometry import test" do
+        {:ok, xmldoc} =import_robot("/test/irb6640.dae")
+        geometries = get_geometries(xmldoc)
+        
+
+        assert Enum.count(geometries) == 9
+        [head|tail] = geometries
+        assert head[:offset] == 0
+        assert head[:set] == 0
+        [first | rest] = head[:positions]
+        is_integer(first) == true
     end
 end
