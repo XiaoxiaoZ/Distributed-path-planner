@@ -21,5 +21,8 @@ defmodule ColladaImportTest do
   %{name: 'Match Two', winner: %{name: 'Team Two'}},
   %{name: 'Match Three', winner: %{name: 'Team One'}}]
 
+
+
+            XmlToMap.naive_map(xmldoc)
         end
 end
