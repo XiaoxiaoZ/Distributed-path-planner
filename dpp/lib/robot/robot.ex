@@ -12,21 +12,6 @@ defmodule ROBOT do
         frame = convert_to_frame(result, "base")
     end
 
-    def convert_to_frame(xmlresult,name) do
-        [t1 | t] = xmlresult[:translates]
-        [t2 | [t3]] = t
-        [r1 | r] = xmlresult[:rotates]
-        [r2 | r_] = r
-        [r3 | [r4]] = r_
-        frame = %{name: name,
-                  rotate_axis_sid: xmlresult[:rotate_axis_sid], 
-                  frames: [%{translate: t1, rotate: r1}, 
-                           %{translate: t2, rotate: r2}, 
-                           %{translate: t3, rotate: r4}],
-                  rotate_axis: r3
-                           }
-    end
-
     def get_base_link(xmldoc) do
         result = xmldoc |> xpath(
             ~x"///library_visual_scenes/visual_scene",
@@ -58,6 +43,52 @@ defmodule ROBOT do
 
     end
 
+    def get_link_3(xmldoc) do
+        link_1_name = 'link_1'
+        link_2_name = 'link_2'
+        link_name = 'link_3'
+        link_3_path = %SweetXpath{path: '//library_visual_scenes/visual_scene/node/node/node[@name=\"'++link_1_name++'\"]/node[@name=\"'++link_2_name++'\"]'}
+        result = get_link(xmldoc, link_3_path, link_name)
+        frame = get_link_frame(xmldoc, link_3_path, link_name)
+        link_3 = %{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
+    end
+
+    def get_link_4(xmldoc) do
+        link_1_name = 'link_1'
+        link_2_name = 'link_2'
+        link_3_name = 'link_3'
+        link_name = 'link_4'
+        link_4_path = %SweetXpath{path: '//library_visual_scenes/visual_scene/node/node/node[@name=\"'++link_1_name++'\"]/node[@name=\"'++link_2_name++'\"]/node[@name=\"'++link_3_name++'\"]'}
+        result = get_link(xmldoc, link_4_path, link_name)
+        frame = get_link_frame(xmldoc, link_4_path, link_name)
+        link_4 = %{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
+    end
+
+    def get_link_5(xmldoc) do
+        link_1_name = 'link_1'
+        link_2_name = 'link_2'
+        link_3_name = 'link_3'
+        link_4_name = 'link_4'
+        link_name = 'link_5'
+        link_5_path = %SweetXpath{path: '//library_visual_scenes/visual_scene/node/node/node[@name=\"'++link_1_name++'\"]/node[@name=\"'++link_2_name++'\"]/node[@name=\"'++link_3_name++'\"]/node[@name=\"'++link_4_name++'\"]'}
+        result = get_link(xmldoc, link_5_path, link_name)
+        frame = get_link_frame(xmldoc, link_5_path, link_name)
+        link_5 = %{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
+    end
+
+    def get_link_6(xmldoc) do
+        link_1_name = 'link_1'
+        link_2_name = 'link_2'
+        link_3_name = 'link_3'
+        link_4_name = 'link_4'
+        link_5_name = 'link_5'
+        link_name = 'link_6'
+        link_6_path = %SweetXpath{path: '//library_visual_scenes/visual_scene/node/node/node[@name=\"'++link_1_name++'\"]/node[@name=\"'++link_2_name++'\"]/node[@name=\"'++link_3_name++'\"]/node[@name=\"'++link_4_name++'\"]/node[@name=\"'++link_5_name++'\"]'}
+        result = get_link(xmldoc, link_6_path, link_name)
+        frame = get_link_frame(xmldoc, link_6_path, link_name)
+        link_6 = %{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
+    end
+
 
     def get_link(xmldoc, link_path, link_name) do
         link_name_path = %SweetXpath{path: './node[@name=\"'++link_name++'\"]/@name'}
@@ -84,8 +115,28 @@ defmodule ROBOT do
         frame = convert_to_frame(result, link_name)
     end
 
+    def get_tool_frame do
+        
+    end
+
     # Update your robot cad with configuration 
     def update_conf(joints) do
         
+    end
+
+    
+    def convert_to_frame(xmlresult,name) do
+        [t1 | t] = xmlresult[:translates]
+        [t2 | [t3]] = t
+        [r1 | r] = xmlresult[:rotates]
+        [r2 | r_] = r
+        [r3 | [r4]] = r_
+        frame = %{name: name,
+                  rotate_axis_sid: xmlresult[:rotate_axis_sid], 
+                  frames: [%{translate: t1, rotate: r1}, 
+                           %{translate: t2, rotate: r2}, 
+                           %{translate: t3, rotate: r4}],
+                  rotate_axis: r3
+                           }
     end
 end
