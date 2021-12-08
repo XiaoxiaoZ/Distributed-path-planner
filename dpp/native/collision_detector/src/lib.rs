@@ -64,7 +64,24 @@ fn collision_detect(a: Vec<f32>, b: Vec<f32>) -> i32 {
 fn draw() {
     let mut window = Window::new("Kiss3d: custom_mesh");
 
-    let mut c = window.add_cube(1.0, 1.0, 1.0);
+    let vertices = vec![
+                        kiss3d::nalgebra::Point3::new(0.0, 1.0, 0.0),
+                        kiss3d::nalgebra::Point3::new(-1.0, -0.5, 0.0),
+                        kiss3d::nalgebra::Point3::new(0.0, -0.5, -1.0),
+                        kiss3d::nalgebra::Point3::new(1.0, -0.5, 0.0),
+                    ];
+        let indices = vec![
+                        kiss3d::nalgebra::Point3::new(0u16, 1, 2),
+                        kiss3d::nalgebra::Point3::new(0, 2, 3),
+                        kiss3d::nalgebra::Point3::new(0, 3, 1),
+                                    ];
+
+    let mesh = Rc::new(RefCell::new(Mesh::new(
+        vertices, indices, None, None, false,
+    )));
+
+
+    let mut c = window.add_mesh(mesh, kiss3d::nalgebra::Vector3::new(1.0, 1.0, 1.0));
     c.set_color(1.0, 0.0, 0.0);
     c.enable_backface_culling(false);
 
