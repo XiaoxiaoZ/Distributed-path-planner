@@ -1,6 +1,6 @@
 # DPP
 
-A distributed path planner
+A Distributed Path Planner
 
 ## Installation
 
