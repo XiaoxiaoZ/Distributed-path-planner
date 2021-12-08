@@ -8,5 +8,6 @@ defmodule CollisionDetectorTest do
         indices = [0, 1, 2, 0, 2, 3, 0, 3, 1]
 
         assert collision_detect(points,indices)== [ ]
+        draw(points,indices)
     end
 end
