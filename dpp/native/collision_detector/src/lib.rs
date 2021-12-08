@@ -14,7 +14,7 @@ use ncollide3d::shape::{Ball, Cuboid, TriMesh};
 
 
 #[rustler::nif]
-fn collision_detect(a: Vec<f32>, b: Vec<f32>) -> Vec<f32> {
+fn collision_detect(a: Vec<f32>, b: Vec<f32>) -> i32 {
 
     let new_vec = vec![a[0]+b[0],a[1]+b[1]];
     let points = vec![
@@ -32,10 +32,11 @@ fn collision_detect(a: Vec<f32>, b: Vec<f32>) -> Vec<f32> {
 
     // Build the mesh.
     let mesh = TriMesh::new(points, indices, None);
-
+    let mesh_pos  = Isometry3::new(Vector3::new(0.0, 0.0, 0.0), na::zero());
+    
     let cuboid = Cuboid::new(Vector3::new(1.0, 1.0, 1.0));
     let ball   = Ball::new(1.0);
-    let margin = 1.0;
+    let margin = 0.001;
 
     let cuboid_pos             = na::one();
     let ball_pos_intersecting  = Isometry3::new(Vector3::new(1.0, 1.0, 1.0), na::zero());
@@ -52,8 +53,11 @@ fn collision_detect(a: Vec<f32>, b: Vec<f32>) -> Vec<f32> {
                                      &cuboid_pos,        &cuboid,
                                      margin);
 
+    let prox = query::proximity(&mesh_pos, &mesh,
+                                &ball_pos_intersecting, &ball,
+                                margin);
 
-    new_vec
+    prox as i32
 }
 
 #[rustler::nif]
