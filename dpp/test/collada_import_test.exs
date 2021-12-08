@@ -69,7 +69,7 @@ defmodule ColladaImportTest do
         assert link_5 == %{frame: %{frames: [%{rotate: '1 0 0 0', translate: '-0 -0 -0'}, %{rotate: '1 0 0 0', translate: '1.67 0 0'}, %{rotate: '1 0 0 0', translate: '0 0 0'}], name: 'link_5', rotate_axis: '0 1 0 0', rotate_axis_sid: 'node_joint_5_axis0'}, instance_geometry: ['#gkmodel0_link_5_geom0'], link_name: 'link_5', linked_links: ['link_6']}  
 
     end
-    """
+
 
     test "link 6 test" do
         {:ok, xmldoc} =import_robot("/test/irb6640.dae")
@@ -95,4 +95,7 @@ defmodule ColladaImportTest do
         [first | rest] = head[:positions]
         is_integer(first) == true
     end
+
+
+        """
 end
