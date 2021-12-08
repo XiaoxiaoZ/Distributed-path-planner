@@ -1,2 +1,2 @@
 # Distributed-path-planner
-Distributed path planner based on elixir
+Distributed Path Planner based on elixir
