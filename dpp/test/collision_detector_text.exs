@@ -3,6 +3,6 @@ defmodule CollisionDetectorTest do
     import Rust.Test
 
     test "greets the world" do
-        assert add([1.23,2.2,3.0],[5.02,23.4,23.1])== []
+        assert add([1.23,2.2,3.0],[5.02,23.4,23.1])== [1.23+5.02, 2.2+23.4]
     end
 end
