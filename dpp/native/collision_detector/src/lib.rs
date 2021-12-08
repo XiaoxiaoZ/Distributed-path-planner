@@ -12,27 +12,113 @@ use std::rc::Rc;
 use ncollide3d::query;
 use ncollide3d::shape::{Ball, Cuboid, TriMesh};
 
+fn elixir_list_to_ncollide3d_points(list: Vec<f32>) -> Vec<Point3<f32>> {
+    let mut points = Vec::new();
+    let mut k = 0;
+    let mut x = 0.0;
+    let mut y = 0.0;
+    let mut z = 0.0;
+    for i in 0..list.len() {
+        //println!("{}", list[i]);
+        if k==0 {
+            x=list[i] as f32;
+            //println!("x: {}", x);
+            k=k+1;
+        } else if k==1 {
+            y=list[i] as f32;
+            //println!("y: {}", y);
+            k=k+1;
+        } else {
+            z = list[i] as f32;
+            //println!("z: {}", z);
+            k=0;
+            points.push(Point3::new(x, y, z));
+        }
+        
+    }
+    points
+}
+
+fn elixir_list_to_ncollide3d_indices(list: Vec<usize>) -> Vec<Point3<usize>> {
+    let mut indices = Vec::new();
+    let mut k = 0;
+    let mut x = 0;
+    let mut y = 0;
+    let mut z = 0;
+    for i in 0..list.len() {
+        //println!("{}", list[i]);
+        if k==0 {
+            x=list[i] as usize;
+            k=k+1;
+        } else if k==1 {
+            y=list[i] as usize;
+            k=k+1;
+        } else if k==2 {
+            z = list[i] as usize;
+            k=0;
+            indices.push(Point3::new(x, y, z));
+        }
+    }
+    indices
+}
+
+fn elixir_list_to_kiss3d_points(list: Vec<f32>) -> Vec<kiss3d::nalgebra::Point3<f32>> {
+    let mut points = Vec::new();
+    let mut k = 0;
+    let mut x = 0.0;
+    let mut y = 0.0;
+    let mut z = 0.0;
+    for i in 0..list.len() {
+        //println!("{}", list[i] as f32);
+        if k==0 {
+            x=list[i] as f32;
+            k=k+1;
+        } else if k==1 {
+            y=list[i] as f32;
+            k=k+1;
+        } else if k==2 {
+            z = list[i] as f32;
+            k=0;
+            points.push(kiss3d::nalgebra::Point3::new(x, y, z));
+        }
+    }
+    points
+}
+
+fn elixir_list_to_kiss3d_indices(list: Vec<usize>) -> Vec<kiss3d::nalgebra::Point3<u16>> {
+    let mut indices = Vec::new();
+    let mut k = 0;
+    let mut x = 0 as u16;
+    let mut y = 0 as u16;
+    let mut z = 0 as u16;
+    for i in 0..list.len() {
+        //println!("{}", list[i] as u16);
+        if k==0 {
+            x=list[i] as u16;
+            k=k+1;
+        } else if k==1 {
+            y=list[i] as u16;
+            k=k+1;
+        } else if k==2 {
+            z = list[i] as u16;
+            k=0;
+            indices.push(kiss3d::nalgebra::Point3::new(x, y, z));
+
+        }
+    }
+    indices
+}
 
 #[rustler::nif]
-fn collision_detect(a: Vec<f32>, b: Vec<f32>) -> i32 {
+fn collision_detect(points1: Vec<f32>, indices1: Vec<usize>) -> i32 {
 
-    let new_vec = vec![a[0]+b[0],a[1]+b[1]];
-    let points = vec![
-        Point3::new(0.0, 1.0, 0.0),
-        Point3::new(-1.0, -0.5, 0.0),
-        Point3::new(0.0, -0.5, -1.0),
-        Point3::new(1.0, -0.5, 0.0),
-                    ];
+    let points_1 = elixir_list_to_ncollide3d_points(points1);
 
-    let indices = vec![
-        Point3::new(0usize, 1, 2),
-        Point3::new(0, 2, 3),
-        Point3::new(0, 3, 1),
-                    ];
-
+    let indices_1 = elixir_list_to_ncollide3d_indices(indices1);
+    
     // Build the mesh.
-    let mesh = TriMesh::new(points, indices, None);
-    let mesh_pos  = Isometry3::new(Vector3::new(0.0, 0.0, 0.0), na::zero());
+    let mesh = TriMesh::new(points_1, indices_1, None);
+    let mesh_pos  = Isometry3::new(Vector3::new(1.0, 1.0, 1.0), na::zero());
     
     let cuboid = Cuboid::new(Vector3::new(1.0, 1.0, 1.0));
     let ball   = Ball::new(1.0);
@@ -61,23 +147,14 @@ fn collision_detect(a: Vec<f32>, b: Vec<f32>) -> i32 {
 }
 
 #[rustler::nif]
-fn draw() {
+fn draw(points_in: Vec<f32>, indices_in: Vec<usize>) {
     let mut window = Window::new("Kiss3d: custom_mesh");
 
-    let vertices = vec![
-                        kiss3d::nalgebra::Point3::new(0.0, 1.0, 0.0),
-                        kiss3d::nalgebra::Point3::new(-1.0, -0.5, 0.0),
-                        kiss3d::nalgebra::Point3::new(0.0, -0.5, -1.0),
-                        kiss3d::nalgebra::Point3::new(1.0, -0.5, 0.0),
-                    ];
-        let indices = vec![
-                        kiss3d::nalgebra::Point3::new(0u16, 1, 2),
-                        kiss3d::nalgebra::Point3::new(0, 2, 3),
-                        kiss3d::nalgebra::Point3::new(0, 3, 1),
-                                    ];
+    let points = elixir_list_to_kiss3d_points(points_in);
+    let indices = elixir_list_to_kiss3d_indices(indices_in);
 
     let mesh = Rc::new(RefCell::new(Mesh::new(
-        vertices, indices, None, None, false,
+        points, indices, None, None, false,
     )));
 
 

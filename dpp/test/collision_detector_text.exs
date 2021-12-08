@@ -1,8 +1,12 @@
 defmodule CollisionDetectorTest do
     use ExUnit.Case
-    import Rust.Test
+    import Collision.Detector
 
-    test "greets the world" do
-        assert collision_detect([1.23,2.2,3.0],[5.02,23.4,23.1])== [1.23+5.02, 2.2+23.4]
+    test "list to list" do
+
+        points = [0.0, 1.0, 0.0, -1.0, -0.5, 0.0, 0.0, -0.5, -1.0, 1.0, -0.5, 0.0]
+        indices = [0, 1, 2, 0, 2, 3, 0, 3, 1]
+
+        assert collision_detect(points,indices)== [ ]
     end
 end
