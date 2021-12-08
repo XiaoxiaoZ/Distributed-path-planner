@@ -1,6 +1,6 @@
 # DPP
 
-**TODO: Add description**
+A distributed path planner
 
 ## Installation
 
