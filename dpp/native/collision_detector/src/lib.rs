@@ -110,15 +110,18 @@ fn elixir_list_to_kiss3d_indices(list: Vec<usize>) -> Vec<kiss3d::nalgebra::Poin
 }
 
 #[rustler::nif]
-fn collision_detect(points1: Vec<f32>, indices1: Vec<usize>) -> i32 {
+fn collision_detect(points1: Vec<f32>, indices1: Vec<usize>, points2: Vec<f32>, indices2: Vec<usize>) -> i32 {
 
     let points_1 = elixir_list_to_ncollide3d_points(points1);
-
     let indices_1 = elixir_list_to_ncollide3d_indices(indices1);
+    let points_2 = elixir_list_to_ncollide3d_points(points2);
+    let indices_2 = elixir_list_to_ncollide3d_indices(indices2);
     
     // Build the mesh.
-    let mesh = TriMesh::new(points_1, indices_1, None);
-    let mesh_pos  = Isometry3::new(Vector3::new(1.0, 1.0, 1.0), na::zero());
+    let mesh1 = TriMesh::new(points_1, indices_1, None);
+    let mesh_pos1  = Isometry3::new(Vector3::new(1.0, 1.0, 1.0), na::zero());
+    let mesh2 = TriMesh::new(points_2, indices_2, None);
+    let mesh_pos2  = Isometry3::new(Vector3::new(1.0, 1.0, 1.0), na::zero());
     
     let cuboid = Cuboid::new(Vector3::new(1.0, 1.0, 1.0));
     let ball   = Ball::new(1.0);
@@ -139,7 +142,7 @@ fn collision_detect(points1: Vec<f32>, indices1: Vec<usize>) -> i32 {
                                      &cuboid_pos,        &cuboid,
                                      margin);
 
-    let prox = query::proximity(&mesh_pos, &mesh,
+    let prox = query::proximity(&mesh_pos1, &mesh1,
                                 &ball_pos_intersecting, &ball,
                                 margin);
 
@@ -157,15 +160,27 @@ fn draw(points_in: Vec<f32>, indices_in: Vec<usize>) {
         points, indices, None, None, false,
     )));
 
+    let mut scenes = Vec::new();
 
-    let mut c = window.add_mesh(mesh, kiss3d::nalgebra::Vector3::new(1.0, 1.0, 1.0));
-    c.set_color(1.0, 0.0, 0.0);
-    c.enable_backface_culling(false);
+    scenes.push(window.add_cone(0.5, 1.0));
+
+    scenes.push(window.add_mesh(mesh, kiss3d::nalgebra::Vector3::new(1.0, 1.0, 1.0)));
+    
+    scenes[1].set_color(1.0, 0.0, 0.0);
+
+    let mesh_pos = kiss3d::nalgebra::Isometry3::new(kiss3d::nalgebra::Vector3::new(1.0, 1.0, 1.0), kiss3d::nalgebra::zero());
+
+    scenes[1].append_transformation(&mesh_pos);
+    let rot = kiss3d::nalgebra::UnitQuaternion::from_axis_angle(&kiss3d::nalgebra::Vector3::y_axis(), 0.014);
+
+    scenes[1].enable_backface_culling(false);
 
    
     window.set_light(Light::StickToCamera);
 
+
     while window.render(){
+        
         for event in window.events().iter() {
             match event.value {
                 WindowEvent::Close => {
