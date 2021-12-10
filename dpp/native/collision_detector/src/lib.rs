@@ -1,6 +1,7 @@
 extern crate ncollide3d;
 extern crate nalgebra as na;
 extern crate kiss3d;
+extern crate rand;
 
 use kiss3d::light::Light;
 use kiss3d::resource::Mesh;
@@ -11,6 +12,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use ncollide3d::query;
 use ncollide3d::shape::{Ball, Cuboid, TriMesh};
+use rand::random;
 
 fn elixir_list_to_ncollide3d_points(list: Vec<f32>) -> Vec<Point3<f32>> {
     let mut points = Vec::new();
@@ -109,8 +111,12 @@ fn elixir_list_to_kiss3d_indices(list: Vec<usize>) -> Vec<kiss3d::nalgebra::Poin
     indices
 }
 
+fn elixir_list_to_kiss3d_isometry(translate_in: Vec<f32>, rotate_in: Vec<f32>) -> kiss3d::nalgebra::Isometry3<f32>{
+    kiss3d::nalgebra::Isometry3::new(kiss3d::nalgebra::Vector3::new(translate_in[0], translate_in[1], translate_in[2]), kiss3d::nalgebra::Vector3::new(rotate_in[0], rotate_in[1], rotate_in[2]))
+}
+
 #[rustler::nif]
-fn collision_detect(points1: Vec<f32>, indices1: Vec<usize>, points2: Vec<f32>, indices2: Vec<usize>) -> i32 {
+fn collision_detect(points1: Vec<f32>, indices1: Vec<usize>, translate1: Vec<f32>, rotate1: Vec<f32>, points2: Vec<f32>, indices2: Vec<usize>, translate2: Vec<f32>, rotate2: Vec<f32>, margin: f32) -> u16 {
 
     let points_1 = elixir_list_to_ncollide3d_points(points1);
     let indices_1 = elixir_list_to_ncollide3d_indices(indices1);
@@ -119,63 +125,51 @@ fn collision_detect(points1: Vec<f32>, indices1: Vec<usize>, points2: Vec<f32>, 
     
     // Build the mesh.
     let mesh1 = TriMesh::new(points_1, indices_1, None);
-    let mesh_pos1  = Isometry3::new(Vector3::new(1.0, 1.0, 1.0), na::zero());
+    let mesh_pos1  = Isometry3::new(Vector3::new(translate1[0], translate1[1], translate1[2]), Vector3::new(rotate1[0], rotate1[1], rotate1[2]));
     let mesh2 = TriMesh::new(points_2, indices_2, None);
-    let mesh_pos2  = Isometry3::new(Vector3::new(1.0, 1.0, 1.0), na::zero());
-    
-    let cuboid = Cuboid::new(Vector3::new(1.0, 1.0, 1.0));
-    let ball   = Ball::new(1.0);
-    let margin = 0.001;
-
-    let cuboid_pos             = na::one();
-    let ball_pos_intersecting  = Isometry3::new(Vector3::new(1.0, 1.0, 1.0), na::zero());
-    let ball_pos_within_margin = Isometry3::new(Vector3::new(2.0, 2.0, 2.0), na::zero());
-    let ball_pos_disjoint      = Isometry3::new(Vector3::new(3.0, 3.0, 3.0), na::zero());
-
-    let prox_intersecting = query::proximity(&ball_pos_intersecting, &ball,
-                                         &cuboid_pos,            &cuboid,
-                                         margin);
-    let prox_within_margin = query::proximity(&ball_pos_within_margin, &ball,
-                                          &cuboid_pos,             &cuboid,
-                                          margin);
-    let prox_disjoint = query::proximity(&ball_pos_disjoint, &ball,
-                                     &cuboid_pos,        &cuboid,
-                                     margin);
+    let mesh_pos2  = Isometry3::new(Vector3::new(translate2[0], translate2[1], translate2[2]), Vector3::new(rotate2[0], rotate2[1], rotate2[2]));
 
     let prox = query::proximity(&mesh_pos1, &mesh1,
-                                &ball_pos_intersecting, &ball,
+                                &mesh_pos2, &mesh2,
                                 margin);
 
-    prox as i32
+    //0: Intersecting,
+    //1: WithinMargin,
+    //2: Disjoint,
+    prox as u16
 }
 
 #[rustler::nif]
-fn draw(points_in: Vec<f32>, indices_in: Vec<usize>) {
+fn draw(points_in: Vec<Vec<f32>>, indices_in: Vec<Vec<usize>>, translate_in: Vec<Vec<f32>>, rotate_in: Vec<Vec<f32>>) {
     let mut window = Window::new("Kiss3d: custom_mesh");
-
-    let points = elixir_list_to_kiss3d_points(points_in);
-    let indices = elixir_list_to_kiss3d_indices(indices_in);
-
-    let mesh = Rc::new(RefCell::new(Mesh::new(
-        points, indices, None, None, false,
-    )));
-
     let mut scenes = Vec::new();
 
-    scenes.push(window.add_cone(0.5, 1.0));
+    for x in 0..points_in.len() {
+        let points = elixir_list_to_kiss3d_points(points_in[x].clone());
+        let indices = elixir_list_to_kiss3d_indices(indices_in[x].clone());
 
-    scenes.push(window.add_mesh(mesh, kiss3d::nalgebra::Vector3::new(1.0, 1.0, 1.0)));
+        let mesh = Rc::new(RefCell::new(Mesh::new(
+            points, indices, None, None, false,
+        )));
+
+        scenes.push(window.add_mesh(mesh, kiss3d::nalgebra::Vector3::new(1.0, 1.0, 1.0)));
     
-    scenes[1].set_color(1.0, 0.0, 0.0);
+        scenes[x].set_color(random(), random(), random());
 
-    let mesh_pos = kiss3d::nalgebra::Isometry3::new(kiss3d::nalgebra::Vector3::new(1.0, 1.0, 1.0), kiss3d::nalgebra::zero());
+        let mesh_pos = elixir_list_to_kiss3d_isometry(translate_in[x].clone(), rotate_in[x].clone());
 
-    scenes[1].append_transformation(&mesh_pos);
-    let rot = kiss3d::nalgebra::UnitQuaternion::from_axis_angle(&kiss3d::nalgebra::Vector3::y_axis(), 0.014);
+        scenes[x].append_transformation(&mesh_pos);
+    
+        //let rot = kiss3d::nalgebra::UnitQuaternion::from_axis_angle(&kiss3d::nalgebra::Vector3::y_axis(), 0.014);
 
-    scenes[1].enable_backface_culling(false);
+        scenes[x].enable_backface_culling(false);
+    }
+
+    
 
    
+
+
     window.set_light(Light::StickToCamera);
 
 
