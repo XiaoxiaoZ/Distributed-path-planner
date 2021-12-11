@@ -1,4 +1,9 @@
 defmodule ColladaImportTest do
+
+    @moduledoc """
+    Import/export files
+    """
+
     use ExUnit.Case
     import COLLADA
     import SweetXml

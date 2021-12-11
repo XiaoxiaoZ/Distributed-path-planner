@@ -1,4 +1,7 @@
 defmodule Collision.Detector do
+    @moduledoc """
+    Provide functions that is from rust
+    """
     use Rustler, otp_app: :dpp, crate: "collision_detector"
 
     # When your NIF is loaded, it will override this function.

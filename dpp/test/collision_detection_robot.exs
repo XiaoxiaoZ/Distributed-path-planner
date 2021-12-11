@@ -1,5 +1,9 @@
 defmodule CollisionDetectionRobot do
     
+    @moduledoc """
+    Test build a robot and test
+    """
+
     use ExUnit.Case
     import COLLADA
     import SweetXml

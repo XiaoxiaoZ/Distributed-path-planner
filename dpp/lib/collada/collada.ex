@@ -1,6 +1,23 @@
 defmodule COLLADA do
+    @moduledoc """
+    Provide funtions related to COLLADA .dae file import geomertries
+    """
+
     import SweetXml
-    # import robot(collada) to robot type 6 axies
+
+    @doc """
+        import robot(collada) file
+        TODO: develop information model for robot.
+    ## Parameters
+
+        - path: COLLDA file path
+
+    ## Examples
+
+        iex> {:ok, xmldoc} =import_robot("/test/irb6640.dae")
+
+    """
+    @spec import_robot(String) :: {:ok, binary()}
     def import_robot(path) do
         {:ok, xmldoc} =File.read(Path.join(File.cwd!,path))
         #docmap = XmlToMap.naive_map(xmldoc)
@@ -10,6 +27,7 @@ defmodule COLLADA do
         #baselink = %{name: basemap["name"],translate: basemap["node"]["#content"]["translate"], rotate: basemap["node"]["#content"]["rotate"]}
         
     end
+
     # import enviroment(collada) to enviroment type
     def import_env do
         

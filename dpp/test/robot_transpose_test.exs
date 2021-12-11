@@ -1,5 +1,8 @@
 defmodule RobotTransposeTest do
-    
+    @moduledoc """
+    Test robotics functions
+    """
+
     use ExUnit.Case
     import COLLADA
     import SweetXml
