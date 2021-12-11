@@ -7,6 +7,7 @@ defmodule DPP.MixProject do
       version: "0.1.0",
       elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
+      description: description(),
       package: package(),
       deps: deps()
     ]
@@ -27,7 +28,8 @@ defmodule DPP.MixProject do
       {:sweet_xml, "~> 0.6.5"},
       {:elixir_xml_to_map, "~> 2.0"},
       {:rustler, "~> 0.22.2"},
-      {:elixir_linear_algebra, "~> 1.0.0", hex: :ela}
+      {:elixir_linear_algebra, "~> 1.0.0", hex: :ela},
+      {:ex_doc, ">= 0.0.0", only: :dev}
     ]
   end
 
@@ -36,7 +38,17 @@ defmodule DPP.MixProject do
       files: ["lib", "mix.exs", "README*", "LICENSE*"],
       maintainers: ["Xiaoxiao Zhang"],
       licenses: ["MIT"],
-      #links: %{"GitHub" => "https://github.com/XiaoxiaoZ/Distributed-path-planner"}
+      links: %{"GitHub" => "https://github.com/XiaoxiaoZ/Distributed-path-planner.git"}
     ]
   end
+
+  defp description do
+    """
+    # DPP
+
+    A Distributed Path Planner
+
+    """
+  end
+  
 end

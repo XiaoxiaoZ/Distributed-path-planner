@@ -1,4 +1,4 @@
-defmodule ROBOT.UTILS do
+defmodule Robot.Utils do
 
     @moduledoc """
     Provide useful robotics functions
