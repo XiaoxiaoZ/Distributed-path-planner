@@ -32,13 +32,13 @@ defmodule CollisionDetectionRobot do
 
         #draw([Enum.at(points,1)],[Enum.at(indices,1)],[[0.0,0.0,0.0]],[[0.0,0.0,0.0]])
 
-        robot_model = add_link_to_robot_model_by_name(robot_model, geometries, names, link_base, 'gkmodel0_base_link_geom0')
-        robot_model = add_link_to_robot_model_by_name(robot_model, geometries, names, link_1, 'gkmodel0_link_1_geom0')
-        robot_model = add_link_to_robot_model_by_name(robot_model, geometries, names, link_2, 'gkmodel0_link_2_geom0')
-        robot_model = add_link_to_robot_model_by_name(robot_model, geometries, names, link_3, 'gkmodel0_link_3_geom0')
-        robot_model = add_link_to_robot_model_by_name(robot_model, geometries, names, link_4, 'gkmodel0_link_4_geom0')
-        robot_model = add_link_to_robot_model_by_name(robot_model, geometries, names, link_5, 'gkmodel0_link_5_geom0')
-        robot_model = add_link_to_robot_model_by_name(robot_model, geometries, names, link_6, 'gkmodel0_link_6_geom0')
+        robot_model = add_link_to_robot_model_by_name(robot_model, geometries, names, link_base, 'gkmodel0_base_link_geom0', 0.0)
+        robot_model = add_link_to_robot_model_by_name(robot_model, geometries, names, link_1, 'gkmodel0_link_1_geom0', :math.pi/6)
+        robot_model = add_link_to_robot_model_by_name(robot_model, geometries, names, link_2, 'gkmodel0_link_2_geom0', :math.pi/6)
+        robot_model = add_link_to_robot_model_by_name(robot_model, geometries, names, link_3, 'gkmodel0_link_3_geom0', :math.pi/6)
+        robot_model = add_link_to_robot_model_by_name(robot_model, geometries, names, link_4, 'gkmodel0_link_4_geom0', :math.pi/6)
+        robot_model = add_link_to_robot_model_by_name(robot_model, geometries, names, link_5, 'gkmodel0_link_5_geom0', :math.pi/6)
+        robot_model = add_link_to_robot_model_by_name(robot_model, geometries, names, link_6, 'gkmodel0_link_6_geom0', :math.pi/6)
 
         points = robot_model[:points]
         indices = robot_model[:indices]
@@ -49,8 +49,13 @@ defmodule CollisionDetectionRobot do
 
         assert length(points)==7
         assert length(indices)==7
+        assert length(translates)==7
+        assert length(rotates)==7
         #assert translates==[]
         #assert indices==[]
+        IO.inspect translates 
+        IO.inspect rotates
+
         draw(points,indices,translates,rotates)
         
     end
