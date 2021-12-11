@@ -25,7 +25,8 @@ defmodule DPP.MixProject do
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
       {:sweet_xml, "~> 0.6.5"},
       {:elixir_xml_to_map, "~> 2.0"},
-      {:rustler, "~> 0.22.2"}
+      {:rustler, "~> 0.22.2"},
+      {:elixir_linear_algebra, "~> 1.0.0", hex: :ela}
     ]
   end
 end

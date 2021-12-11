@@ -1,5 +1,8 @@
 defmodule ROBOT.LINKS do
     import SweetXml
+    import ROBOT.UTILS
+    alias ELA.Matrix, as: Matrix
+    alias ELA.Vector, as: Vector
 
 
     def get_base_frame(xmldoc) do
@@ -7,7 +10,7 @@ defmodule ROBOT.LINKS do
             ~x"//library_visual_scenes/visual_scene",
             translates: ~x"./node/node/node[@name=\"base\"]/translate/text()"l,
             rotate_axis_sid: ~x"./node/node/node[@name=\"base\"]/rotate/@sid",
-            rotates: ~x"./node/node/node[@name=\"base\"]/rotate/text()"l
+            rotates: ~x"./node/node/node[@name=\"base\"]/rotate/text()"l,
         )
         frame = convert_to_frame(result, "base")
     end
@@ -173,7 +176,7 @@ defmodule ROBOT.LINKS do
     # Some funtions 
 
 
-    def add_link_to_robot_model_by_name(robot_model, geometries, names, link, name) do
+    def add_link_to_robot_model_by_name(robot_model, geometries, names, link, name, joint_value) do
         index = Enum.find_index(names,fn x-> x==name end) 
         points = robot_model[:points]
         indices = robot_model[:indices]
@@ -183,19 +186,28 @@ defmodule ROBOT.LINKS do
         robot_model = %{robot_model | points: new_points}
         new_indices = List.insert_at(indices, length(indices),Enum.at(geometries,index)|>Map.fetch!(:triangles))
         robot_model = %{robot_model | indices: new_indices}
-        IO.inspect List.last(robot_model[:translates]), label: "The last list is" 
-        IO.inspect  get_trans_or_rot_from_link(link, :translate), label: "The new list is" 
-        IO.inspect add_two_list(List.last(robot_model[:translates]), get_trans_or_rot_from_link(link, :translate)), label: "The list is" 
-        new_translates = List.insert_at(translates, length(translates),add_two_list(List.last(robot_model[:translates]), get_trans_or_rot_from_link(link, :translate)))
+        
+        tranf_temp = apply_joint(List.last(robot_model[:translates]),List.last(robot_model[:rotates]), get_trans_or_rot_from_link(link, :translate),get_trans_or_rot_from_link(link, :rotate), get_joint_from_link(link, joint_value))
+        
+        new_translates = List.insert_at(translates, length(translates),tranf_temp[:trans])
         
         
         robot_model = %{robot_model | translates: new_translates}
-        new_rotates = List.insert_at(rotates, length(rotates),get_trans_or_rot_from_link(link, :rotate))
+        new_rotates = List.insert_at(rotates, length(rotates),tranf_temp[:rot])
         robot_model = %{robot_model | rotates: new_rotates}
     end
 
     defp get_trans_or_rot_from_link(link, key) do
         link|>Map.fetch!(:frame)|>Map.fetch!(:frames)|>Enum.at(1)|>Map.fetch!(key)
+    end
+
+    defp get_joint_from_link(link, joint_value) do
+
+        rot = link|>Map.fetch!(:frame)|>Map.fetch!(:rotate_axis)
+        
+        rot = List.replace_at(rot, 3,joint_value)
+
+        rot
     end
 
     def add_two_list(old_trans, new_trans) do
@@ -206,5 +218,23 @@ defmodule ROBOT.LINKS do
         end
     end
 
+    def apply_joint(old_trans, old_rots, new_trans, new_rots, joint_vector) when old_trans==nil do
 
+        apply_joint([0.0,0.0,0.0], [1.0,0.0,0.0,0.0], new_trans, new_rots, joint_vector)
+    end
+
+    def apply_joint(old_trans, old_rots, new_trans, new_rots, joint_vector) do
+
+        
+        old_mat = matrixFromAxisAngle(old_rots, old_trans)
+        new_mat = matrixFromAxisAngle(new_rots, new_trans)
+        joint_vector = matrixFromAxisAngle(joint_vector, [0.0,0.0,0.0])
+        mat_temp = Matrix.mult(old_mat, new_mat)
+
+        IO.inspect old_mat, label: "old_mat:"
+        IO.inspect new_mat, label: "new_mat:"
+        IO.inspect joint_vector, label: "joint_vector:"
+        IO.inspect Matrix.mult(mat_temp, joint_vector), label: "muilt:"
+        axisAngleFromMatrix(Matrix.mult(mat_temp, joint_vector))
+    end
 end
