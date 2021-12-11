@@ -1,11 +1,11 @@
-defmodule ROBOT.LINKS do
+defmodule Robot.Links do
 
     @moduledoc """
     Provide functions that import robot links
     """
 
     import SweetXml
-    import ROBOT.UTILS
+    import Robot.Utils
     alias ELA.Matrix, as: Matrix
     alias ELA.Vector, as: Vector
 

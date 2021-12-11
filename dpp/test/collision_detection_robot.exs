@@ -7,7 +7,7 @@ defmodule CollisionDetectionRobot do
     use ExUnit.Case
     import COLLADA
     import SweetXml
-    import ROBOT.LINKS    
+    import Robot.Links   
     import Collision.Detector
     
     
