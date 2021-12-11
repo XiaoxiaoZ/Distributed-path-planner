@@ -9,11 +9,6 @@ defmodule ColladaImportTest do
     import SweetXml
     import Robot.Links
 
-
-
-
-
-
 @doc """
 
     test "Base link import" do
