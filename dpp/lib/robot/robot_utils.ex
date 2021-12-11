@@ -1,5 +1,9 @@
 defmodule ROBOT.UTILS do
 
+    @moduledoc """
+    Provide useful robotics functions
+    """
+
     alias ELA.Matrix, as: Matrix
     alias ELA.Vector, as: Vector
     

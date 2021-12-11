@@ -1,10 +1,31 @@
 defmodule ROBOT.LINKS do
+
+    @moduledoc """
+    Provide functions that import robot links
+    """
+
     import SweetXml
     import ROBOT.UTILS
     alias ELA.Matrix, as: Matrix
     alias ELA.Vector, as: Vector
 
 
+    @doc """
+        Get base frame information in a Map
+        TODO: develop information model for robot.
+    ## Parameters
+
+        - xmldoc: xml file readed
+
+    ## Examples
+
+        result = get_base_frame(xmldoc)
+
+    """
+    @spec get_base_frame(binary()) :: %{frames: List, 
+                                        name: String, 
+                                        rotate_axis: List, 
+                                        rotate_axis_sid: Charlist}
     def get_base_frame(xmldoc) do
         result = xmldoc |> xpath(
             ~x"//library_visual_scenes/visual_scene",
@@ -15,6 +36,23 @@ defmodule ROBOT.LINKS do
         frame = convert_to_frame(result, "base")
     end
 
+
+    @doc """
+        Get base link information in a Map
+        TODO: develop information model for robot.
+    ## Parameters
+
+        - xmldoc: xml file readed
+
+    ## Examples
+
+        result = get_base_link(xmldoc)
+
+    """
+    @spec get_base_link(binary()) :: %{link_name: Charlist,
+                                       instance_geometry: Charlist, 
+                                       frame: %{}, 
+                                       linked_links: List}
     def get_base_link(xmldoc) do
         #result = xmldoc |> xpath(
          #   ~x"///library_visual_scenes/visual_scene",
@@ -34,6 +72,33 @@ defmodule ROBOT.LINKS do
     
     end
     
+
+    @doc """
+        Get link_1 information and put it in a Map
+        TODO: develop information model for robot.
+    ## Parameters
+
+        - xmldoc: xml file readed
+
+    ## Examples
+
+        iex> get_link_1(xmldoc)
+        %{frame: 
+            %{frames: 
+                [%{rotate: [1.0, 0.0, 0.0, 0.0], translate: [0.0, 0.0, 0.0]}, 
+                 %{rotate: [1.0, 0.0, 0.0, 0.0], translate: [0.0, 0.0, 0.227]}, 
+                 %{rotate: [1.0, 0.0, 0.0, 0.0], translate: [0.0, 0.0, 0.0]}], 
+              name: 'link_1', 
+              rotate_axis: [0.0, 0.0, 1.0, 0.0], 
+              rotate_axis_sid: 'node_joint_1_axis0'}, 
+          instance_geometry: ['#gkmodel0_link_1_geom0'], 
+          link_name: 'link_1', 
+          linked_links: ['link_2', 'link_cylinder']}
+    """
+    @spec get_link_1(binary()) :: %{link_name: Charlist,
+                                    instance_geometry: List, 
+                                    frame: %{}, 
+                                    linked_links: List}
     def get_link_1(xmldoc) do
         link_name = 'link_1'
         
@@ -46,6 +111,10 @@ defmodule ROBOT.LINKS do
         link_1 = %{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
     end
 
+
+    @doc """
+    TODO: merge to get_link_n, after development of information model
+    """
     def get_link_2(xmldoc) do
         link_name = 'link_2'
         link_2_path=get_link_path(link_name)
@@ -54,7 +123,9 @@ defmodule ROBOT.LINKS do
         link_2 = %{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
 
     end
-
+    @doc """
+    TODO: merge to get_link_n, after development of information model
+    """
     def get_link_3(xmldoc) do
         link_name = 'link_3'
         link_3_path = get_link_path(link_name)
@@ -62,7 +133,9 @@ defmodule ROBOT.LINKS do
         frame = get_link_frame(xmldoc, link_3_path, link_name)
         link_3 = %{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
     end
-
+    @doc """
+    TODO: merge to get_link_n, after development of information model
+    """
     def get_link_4(xmldoc) do
         link_name = 'link_4'
         link_4_path = get_link_path(link_name)
@@ -70,7 +143,9 @@ defmodule ROBOT.LINKS do
         frame = get_link_frame(xmldoc, link_4_path, link_name)
         link_4 = %{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
     end
-
+    @doc """
+    TODO: merge to get_link_n, after development of information model
+    """
     def get_link_5(xmldoc) do
         link_name = 'link_5'
         link_5_path = get_link_path(link_name)
@@ -78,7 +153,9 @@ defmodule ROBOT.LINKS do
         frame = get_link_frame(xmldoc, link_5_path, link_name)
         link_5 = %{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
     end
-
+    @doc """
+    TODO: merge to get_link_n, after development of information model
+    """
     def get_link_6(xmldoc) do
         link_name = 'link_6'
         link_6_path = get_link_path(link_name)

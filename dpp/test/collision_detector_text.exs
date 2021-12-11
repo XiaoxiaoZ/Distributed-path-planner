@@ -1,4 +1,8 @@
 defmodule CollisionDetectorTest do
+    @moduledoc """
+    Test simple mesh collision and draw
+    """
+
     use ExUnit.Case
     import Collision.Detector
 
