@@ -112,7 +112,7 @@ fn elixir_list_to_kiss3d_indices(list: Vec<usize>) -> Vec<kiss3d::nalgebra::Poin
 }
 
 fn elixir_list_to_kiss3d_isometry(translate_in: Vec<f32>, rotate_in: Vec<f32>) -> kiss3d::nalgebra::Isometry3<f32>{
-    kiss3d::nalgebra::Isometry3::new(kiss3d::nalgebra::Vector3::new(translate_in[0], translate_in[1], translate_in[2]), kiss3d::nalgebra::Vector3::new(rotate_in[0], rotate_in[1], rotate_in[2]))
+    kiss3d::nalgebra::Isometry3::new(kiss3d::nalgebra::Vector3::new(translate_in[0], translate_in[1], translate_in[2]), kiss3d::nalgebra::Vector3::new(rotate_in[0]*rotate_in[3], rotate_in[1]*rotate_in[3], rotate_in[2]*rotate_in[3]))
 }
 
 #[rustler::nif]
@@ -125,9 +125,9 @@ fn collision_detect(points1: Vec<f32>, indices1: Vec<usize>, translate1: Vec<f32
     
     // Build the mesh.
     let mesh1 = TriMesh::new(points_1, indices_1, None);
-    let mesh_pos1  = Isometry3::new(Vector3::new(translate1[0], translate1[1], translate1[2]), Vector3::new(rotate1[0], rotate1[1], rotate1[2]));
+    let mesh_pos1  = Isometry3::new(Vector3::new(translate1[0], translate1[1], translate1[2]), Vector3::new(rotate1[0]*rotate1[3], rotate1[1]*rotate1[3], rotate1[2]*rotate1[3]));
     let mesh2 = TriMesh::new(points_2, indices_2, None);
-    let mesh_pos2  = Isometry3::new(Vector3::new(translate2[0], translate2[1], translate2[2]), Vector3::new(rotate2[0], rotate2[1], rotate2[2]));
+    let mesh_pos2  = Isometry3::new(Vector3::new(translate2[0], translate2[1], translate2[2]), Vector3::new(rotate2[0]*rotate2[3], rotate2[1]*rotate2[3], rotate2[2]*rotate2[3]));
 
     let prox = query::proximity(&mesh_pos1, &mesh1,
                                 &mesh_pos2, &mesh2,
@@ -140,6 +140,7 @@ fn collision_detect(points1: Vec<f32>, indices1: Vec<usize>, translate1: Vec<f32
 }
 
 #[rustler::nif]
+// The number of indices is limited to u16... because of webgl....
 fn draw(points_in: Vec<Vec<f32>>, indices_in: Vec<Vec<usize>>, translate_in: Vec<Vec<f32>>, rotate_in: Vec<Vec<f32>>) {
     let mut window = Window::new("Kiss3d: custom_mesh");
     let mut scenes = Vec::new();
@@ -158,6 +159,7 @@ fn draw(points_in: Vec<Vec<f32>>, indices_in: Vec<Vec<usize>>, translate_in: Vec
 
         let mesh_pos = elixir_list_to_kiss3d_isometry(translate_in[x].clone(), rotate_in[x].clone());
 
+        
         scenes[x].append_transformation(&mesh_pos);
     
         //let rot = kiss3d::nalgebra::UnitQuaternion::from_axis_angle(&kiss3d::nalgebra::Vector3::y_axis(), 0.014);
@@ -171,7 +173,7 @@ fn draw(points_in: Vec<Vec<f32>>, indices_in: Vec<Vec<usize>>, translate_in: Vec
 
 
     window.set_light(Light::StickToCamera);
-
+    window.set_background_color(0.5, 0.5, 0.5);
 
     while window.render(){
         

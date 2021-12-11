@@ -13,13 +13,22 @@ defmodule ROBOT.LINKS do
     end
 
     def get_base_link(xmldoc) do
-        result = xmldoc |> xpath(
-            ~x"///library_visual_scenes/visual_scene",
-            link_name: ~x"./node/node/@name",
-            instance_geometry: ~x"./node/node/instance_geometry/@url",
-            translate: ~x"./node/node/translate/text()",
-            rotate: ~x"./node/node/rotate/text()"
-        )
+        #result = xmldoc |> xpath(
+         #   ~x"///library_visual_scenes/visual_scene",
+        #    link_name: ~x"./node/node/@name",
+        ##    instance_geometry: ~x"./node/node/instance_geometry/@url",
+        #    translate: ~x"./node/node/translate/text()",
+         #   rotate: ~x"./node/node/rotate/text()"
+        link_name = 'base_link'
+        
+        link_base_path = get_link_path(link_name)
+
+        result = get_link(xmldoc, link_base_path, link_name)
+
+        frame = get_base_frame(xmldoc)
+
+        link_base = %{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
+    
     end
     
     def get_link_1(xmldoc) do
@@ -76,12 +85,14 @@ defmodule ROBOT.LINKS do
     end
 
     def get_link_path(link) do
+        link_base_name = 'base_link'
         link_1_name = 'link_1'
         link_2_name = 'link_2'
         link_3_name = 'link_3'
         link_4_name = 'link_4'
         link_5_name = 'link_5'
         link_6_name = 'link_6'
+        link_base_path = %SweetXpath{path: '//library_visual_scenes/visual_scene/node'}
         link_1_path = %SweetXpath{path: '//library_visual_scenes/visual_scene/node/node'}
         link_2_path = %SweetXpath{path: '//library_visual_scenes/visual_scene/node/node/node[@name=\"'++link_1_name++'\"]'}
         link_3_path = %SweetXpath{path: '//library_visual_scenes/visual_scene/node/node/node[@name=\"'++link_1_name++'\"]/node[@name=\"'++link_2_name++'\"]'}
@@ -89,6 +100,7 @@ defmodule ROBOT.LINKS do
         link_5_path = %SweetXpath{path: '//library_visual_scenes/visual_scene/node/node/node[@name=\"'++link_1_name++'\"]/node[@name=\"'++link_2_name++'\"]/node[@name=\"'++link_3_name++'\"]/node[@name=\"'++link_4_name++'\"]'}
         link_6_path = %SweetXpath{path: '//library_visual_scenes/visual_scene/node/node/node[@name=\"'++link_1_name++'\"]/node[@name=\"'++link_2_name++'\"]/node[@name=\"'++link_3_name++'\"]/node[@name=\"'++link_4_name++'\"]/node[@name=\"'++link_5_name++'\"]'}
         link_paths = [
+                        %{name: link_base_name, path: link_base_path},
                         %{name: link_1_name, path: link_1_path},
                         %{name: link_2_name, path: link_2_path},
                         %{name: link_3_name, path: link_3_path},
@@ -157,4 +169,42 @@ defmodule ROBOT.LINKS do
         pos_list_f = String.split(to_string(charlist))
                         |> Enum.map(fn s -> Float.parse(s) |> elem(0) end) 
     end
+
+    # Some funtions 
+
+
+    def add_link_to_robot_model_by_name(robot_model, geometries, names, link, name) do
+        index = Enum.find_index(names,fn x-> x==name end) 
+        points = robot_model[:points]
+        indices = robot_model[:indices]
+        translates = robot_model[:translates]
+        rotates = robot_model[:rotates]
+        new_points = List.insert_at(points, length(points),Enum.at(geometries,index)|>Map.fetch!(:positions))
+        robot_model = %{robot_model | points: new_points}
+        new_indices = List.insert_at(indices, length(indices),Enum.at(geometries,index)|>Map.fetch!(:triangles))
+        robot_model = %{robot_model | indices: new_indices}
+        IO.inspect List.last(robot_model[:translates]), label: "The last list is" 
+        IO.inspect  get_trans_or_rot_from_link(link, :translate), label: "The new list is" 
+        IO.inspect add_two_list(List.last(robot_model[:translates]), get_trans_or_rot_from_link(link, :translate)), label: "The list is" 
+        new_translates = List.insert_at(translates, length(translates),add_two_list(List.last(robot_model[:translates]), get_trans_or_rot_from_link(link, :translate)))
+        
+        
+        robot_model = %{robot_model | translates: new_translates}
+        new_rotates = List.insert_at(rotates, length(rotates),get_trans_or_rot_from_link(link, :rotate))
+        robot_model = %{robot_model | rotates: new_rotates}
+    end
+
+    defp get_trans_or_rot_from_link(link, key) do
+        link|>Map.fetch!(:frame)|>Map.fetch!(:frames)|>Enum.at(1)|>Map.fetch!(key)
+    end
+
+    def add_two_list(old_trans, new_trans) do
+        if old_trans do
+            trans = new_trans|> Enum.with_index |> Enum.map(fn({x, i}) -> x + Enum.at(old_trans,i) end)
+        else
+            trans = new_trans
+        end
+    end
+
+
 end
