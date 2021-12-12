@@ -19,10 +19,7 @@ defmodule Robot.Links do
     ## Examples
         result = get_base_frame(xmldoc)
     """
-    @spec get_base_frame(binary()) :: %{frames: List, 
-                                        name: Charlist, 
-                                        rotate_axis: List, 
-                                        rotate_axis_sid: Charlist}
+    @spec get_base_frame(binary()) :: Robot.Frame
     def get_base_frame(xmldoc) do
         result = xmldoc |> xpath(
             ~x"//library_visual_scenes/visual_scene",
@@ -42,10 +39,7 @@ defmodule Robot.Links do
     ## Examples
         result = get_base_link(xmldoc)
     """
-    @spec get_base_link(binary()) :: %{link_name: Charlist,
-                                       instance_geometry: Charlist, 
-                                       frame: %{}, 
-                                       linked_links: List}
+    @spec get_base_link(binary()) :: Robot.Link
     def get_base_link(xmldoc) do
         #result = xmldoc |> xpath(
          #   ~x"///library_visual_scenes/visual_scene",
@@ -61,7 +55,7 @@ defmodule Robot.Links do
 
         frame = get_base_frame(xmldoc)
 
-        link_base = %{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
+        link_base = %Robot.Link{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
     
     end
     
@@ -85,10 +79,7 @@ defmodule Robot.Links do
           link_name: 'link_1', 
           linked_links: ['link_2', 'link_cylinder']}
     """
-    @spec get_link_1(binary()) :: %{link_name: Charlist,
-                                    instance_geometry: List, 
-                                    frame: %{}, 
-                                    linked_links: List}
+    @spec get_link_1(binary()) :: Robot.Link
     def get_link_1(xmldoc) do
         link_name = 'link_1'
         
@@ -98,7 +89,7 @@ defmodule Robot.Links do
 
         frame = get_link_frame(xmldoc, link_1_path, link_name)
 
-        link_1 = %{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
+        link_1 = %Robot.Link{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
     end
 
 
@@ -110,7 +101,7 @@ defmodule Robot.Links do
         link_2_path=get_link_path(link_name)
         result = get_link(xmldoc, link_2_path, link_name)
         frame = get_link_frame(xmldoc, link_2_path, link_name)
-        link_2 = %{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
+        link_2 = %Robot.Link{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
 
     end
     @doc """
@@ -121,7 +112,7 @@ defmodule Robot.Links do
         link_3_path = get_link_path(link_name)
         result = get_link(xmldoc, link_3_path, link_name)
         frame = get_link_frame(xmldoc, link_3_path, link_name)
-        link_3 = %{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
+        link_3 = %Robot.Link{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
     end
     @doc """
     TODO: merge to get_link_n, after development of information model
@@ -131,7 +122,7 @@ defmodule Robot.Links do
         link_4_path = get_link_path(link_name)
         result = get_link(xmldoc, link_4_path, link_name)
         frame = get_link_frame(xmldoc, link_4_path, link_name)
-        link_4 = %{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
+        link_4 = %Robot.Link{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
     end
     @doc """
     TODO: merge to get_link_n, after development of information model
@@ -141,7 +132,7 @@ defmodule Robot.Links do
         link_5_path = get_link_path(link_name)
         result = get_link(xmldoc, link_5_path, link_name)
         frame = get_link_frame(xmldoc, link_5_path, link_name)
-        link_5 = %{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
+        link_5 = %Robot.Link{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
     end
     @doc """
     TODO: merge to get_link_n, after development of information model
@@ -151,7 +142,7 @@ defmodule Robot.Links do
         link_6_path = get_link_path(link_name)
         result = get_link(xmldoc, link_6_path, link_name)
         frame = get_link_frame(xmldoc, link_6_path, link_name)
-        link_6 = %{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
+        link_6 = %Robot.Link{link_name: result[:link_name], instance_geometry: result[:instance_geometry], frame: frame, linked_links: result[:linked_links]}
     end
 
     @doc """
@@ -232,10 +223,7 @@ defmodule Robot.Links do
         link_6_path = get_link_path(link_name)
         result = get_link(xmldoc, link_6_path, link_name)
     """
-    @spec get_link_frame(binary(), %SweetXpath{}, Charlist) :: %{frames: List, 
-                                                                name: Charlist, 
-                                                                rotate_axis: List, 
-                                                                rotate_axis_sid: Charlist}
+    @spec get_link_frame(binary(), %SweetXpath{}, Charlist) :: Robot.Frame
     def get_link_frame(xmldoc, link_path, link_name) do
         translates_path = %SweetXpath{path: './node[@name=\"'++link_name++'\"]/translate/text()', is_list: true}
         rotate_axis_sid_path = %SweetXpath{path: './node[@name=\"'++link_name++'\"]/rotate/@sid'}
@@ -273,10 +261,7 @@ defmodule Robot.Links do
         )
         frame = convert_to_frame(result, link_name)
     """   
-    @spec convert_to_frame(binary(), Charlist) :: %{name: Charlist,
-                                                                rotate_axis_sid: Charlist, 
-                                                                frames: List,
-                                                                rotate_axis: List}
+    @spec convert_to_frame(binary(), Charlist) :: Robot.Frame
     def convert_to_frame(xmlresult,name) do
         [t1 | t] = xmlresult[:translates]
         [t2 | [t3]] = t
@@ -284,7 +269,7 @@ defmodule Robot.Links do
         [r2 | r_] = r
         [r3 | [r4]] = r_
 
-        frame = %{name: name,
+        frame = %Robot.Frame{name: name,
                   rotate_axis_sid: xmlresult[:rotate_axis_sid], 
                   frames: [%{translate: charlist_to_flist(t1), rotate: charlist_to_flist(r1)}, 
                            %{translate: charlist_to_flist(t2), rotate: charlist_to_flist(r2)}, 
@@ -334,7 +319,7 @@ defmodule Robot.Links do
         robot_model = add_link_to_robot_model_by_name(robot_model, geometries, names, link_5, 'gkmodel0_link_5_geom0', :math.pi/6)
         robot_model = add_link_to_robot_model_by_name(robot_model, geometries, names, link_6, 'gkmodel0_link_6_geom0', :math.pi/6)
     """
-    @spec add_link_to_robot_model_by_name(%{points: List, indices: List, translates: List, rotates: List}, List, List, %{link_name: Charlist, instance_geometry: List, frame: %{name: Charlist, rotate_axis_sid: Charlist, frames: List, rotate_axis: List}, linked_links: List}, Charlist, Float) :: %{points: List, indices: List, translates: List, rotates: List}
+    @spec add_link_to_robot_model_by_name(%{points: List, indices: List, translates: List, rotates: List}, List, List, %{link_name: Charlist, instance_geometry: List, frame: %{name: Charlist, rotate_axis_sid: Charlist, frames: List, rotate_axis: List}, linked_links: List}, Charlist, Float) :: Rbot.Mesh
     def add_link_to_robot_model_by_name(robot_model, geometries, names, link, name, joint_value) do
         index = Enum.find_index(names,fn x-> x==name end) 
         points = robot_model.points

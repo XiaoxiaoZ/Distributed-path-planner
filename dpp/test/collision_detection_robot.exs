@@ -15,10 +15,8 @@ defmodule CollisionDetectionRobot do
 
     test "Robot test" do
 
-        joints = %Robot.Joints{joint1: :math.pi/6, joint2: :math.pi/6, joint3: :math.pi/6, joint4: :math.pi/6, joint5: :math.pi/6, joint6: :math.pi/6}
+        joints = %Robot.Joints{joint1: :math.pi/2, joint2: :math.pi/6, joint3: :math.pi/6, joint4: :math.pi/6, joint5: -:math.pi/6, joint6: :math.pi/6}
         
-
-
         robot_model = get_robot_model_based_on_joint_value(joints)
         
         points = robot_model.points
