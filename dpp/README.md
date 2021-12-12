@@ -2,6 +2,8 @@
 
 A Distributed Path Planner
 
+rust is used as erlang nif
+
 ## Installation
 
 Adding `dpp` to your list of dependencies in `mix.exs`:
