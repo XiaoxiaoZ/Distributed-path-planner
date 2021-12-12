@@ -13,6 +13,7 @@ def deps do
   ]
 end
 ```
+## Documentation
 
 The docs can
 be found at [https://hexdocs.pm/dpp](https://hexdocs.pm/dpp).
