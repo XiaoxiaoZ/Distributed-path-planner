@@ -393,11 +393,6 @@ defmodule Robot.Links do
         new_mat = matrixFromAxisAngle(new_rots, new_trans)
         joint_vector = matrixFromAxisAngle(joint_vector, [0.0,0.0,0.0])
         mat_temp = Matrix.mult(old_mat, new_mat)
-
-        IO.inspect old_mat, label: "old_mat:"
-        IO.inspect new_mat, label: "new_mat:"
-        IO.inspect joint_vector, label: "joint_vector:"
-        IO.inspect Matrix.mult(mat_temp, joint_vector), label: "muilt:"
         axisAngleFromMatrix(Matrix.mult(mat_temp, joint_vector))
     end
 
