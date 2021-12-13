@@ -115,7 +115,7 @@ fn elixir_list_to_kiss3d_isometry(translate_in: Vec<f32>, rotate_in: Vec<f32>) -
     kiss3d::nalgebra::Isometry3::new(kiss3d::nalgebra::Vector3::new(translate_in[0], translate_in[1], translate_in[2]), kiss3d::nalgebra::Vector3::new(rotate_in[0]*rotate_in[3], rotate_in[1]*rotate_in[3], rotate_in[2]*rotate_in[3]))
 }
 
-#[rustler::nif]
+#[rustler::nif(schedule = "DirtyCpu")]
 fn collision_detect(points1: Vec<f32>, indices1: Vec<usize>, translate1: Vec<f32>, rotate1: Vec<f32>, points2: Vec<f32>, indices2: Vec<usize>, translate2: Vec<f32>, rotate2: Vec<f32>, margin: f32) -> u16 {
 
     let points_1 = elixir_list_to_ncollide3d_points(points1);
@@ -139,7 +139,7 @@ fn collision_detect(points1: Vec<f32>, indices1: Vec<usize>, translate1: Vec<f32
     prox as u16
 }
 
-#[rustler::nif]
+#[rustler::nif(schedule = "DirtyCpu")]
 // The number of indices is limited to u16... because of webgl....
 fn draw(points_in: Vec<Vec<f32>>, indices_in: Vec<Vec<usize>>, translate_in: Vec<Vec<f32>>, rotate_in: Vec<Vec<f32>>) {
     let mut window = Window::new("Kiss3d: custom_mesh");
