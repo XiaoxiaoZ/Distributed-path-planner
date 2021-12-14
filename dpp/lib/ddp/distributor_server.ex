@@ -18,7 +18,6 @@ def test_fun(data) do
   rotate2 = data[:rotate2]
   margin = data[:margin]
   result = Collision.Detector.collision_detect(point1, indice1, translate1, rotate1,point2,indice2, translate2, rotate2, margin)
-  IO.puts result
   result == 2
 end
 
