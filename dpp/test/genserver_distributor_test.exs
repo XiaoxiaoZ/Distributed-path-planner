@@ -52,6 +52,8 @@ defmodule GenServerDistributorTest do
         CollisionDetectorSupervisor.start_link(10)
         :timer.sleep(50000)
         TaskManager.add_task(data1)
+        :timer.sleep(3000)
+        TaskManager.remove_all_tasks()
         :timer.sleep(100000)
         IO.inspect TaskManager.get_result
     end

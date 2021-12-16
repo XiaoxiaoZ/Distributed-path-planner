@@ -17,12 +17,36 @@ defmodule TaskManager do
         GenServer.cast({:global, :task_manager},{:recieve_result, task_id, result})
     end
 
+    @doc """
+        Get result from server
+        !TODO Not good idea this one, rewrite
+    """
+    @spec get_result() :: None
     def get_result do
         GenServer.call({:global, :task_manager}, {:get_result})
     end
 
+    @doc """
+        Add more tasks to TaskManager.
+    ## Parameters
+        - collision_data: new calculation tasks that will be added to the task manager
+    ## Examples
+        TaskManager.add_task(tasks)
+    """
+    @spec add_task(List) :: None
     def add_task(collision_data) do
         GenServer.cast({:global, :task_manager},{:add_task, collision_data})
+    end
+
+    @doc """
+        Remove all tasks to TaskManager.
+        !!!!TODO
+    ## Examples
+        TaskManager.add_task(tasks)
+    """
+    @spec remove_all_tasks() :: None
+    def remove_all_tasks() do
+        GenServer.cast({:global, :task_manager},{:remove_all_tasks})
     end
 
     @impl true
@@ -33,6 +57,11 @@ defmodule TaskManager do
     @impl true
     def handle_cast({:add_task, new_collision_data}, {collision_data, pending, done_tasks, results}) do
         {:noreply, {List.flatten([new_collision_data | collision_data]), pending, done_tasks, results}}
+    end
+    
+    @impl true
+    def handle_cast({:remove_all_tasks}, {collision_data, pending, done_tasks, results}) do
+        {:noreply, {[], pending, done_tasks, Map.new()}}
     end
 
     @impl true
@@ -72,8 +101,8 @@ defmodule TaskManager do
       pending # Nothing to do
     else
     #TODO: this empty LIST need to be a argument impot!!!!!
-      empty_task = %{point1: [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0], indice1: [0,1,2], translate1: [0.0,0.0,0.0], rotate1: [0.0,0.0,0.0,0.0], point2: [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0], indice2: [0,1,2], translate2: [0.0,0.0,0.0], rotate2: [0.0,0.0,0.0,0.0], margin: 0.1}
-      {task_id, prev_task} ={:empty_task, empty_task}
+      #empty_task = %{point1: [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0], indice1: [0,1,2], translate1: [0.0,0.0,0.0], rotate1: [0.0,0.0,0.0,0.0], point2: [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0], indice2: [0,1,2], translate2: [0.0,0.0,0.0], rotate2: [0.0,0.0,0.0,0.0], margin: 0.1}
+      {task_id, prev_task} ={:empty_task, nil}
       Collision.Detector.Server.send_result(pid, task_id, prev_task)
       Map.put(Map.delete(pending, task_id), task_id, prev_task)
     end
