@@ -39,9 +39,9 @@ defmodule CollisionDetectionRobot do
         translate2 = [2.0, 2.0, 0.2]
         rotate2 = [0.0, 1.0, 0.0, 0.0]
 
-        IO.inspect :timer.tc(fn() -> Collision.Detector.collision_detect(Enum.at(points,0), Enum.at(indices,0), Enum.at(translates,0), Enum.at(rotates,0), point2,indice2, translate2, rotate2, 0.001) end), label: "Fast: "
+        #IO.inspect :timer.tc(fn() -> Collision.Detector.collision_detect(Enum.at(points,0), Enum.at(indices,0), Enum.at(translates,0), Enum.at(rotates,0), point2,indice2, translate2, rotate2, 0.001) end), label: "Fast: "
         
-        #draw(points,indices,translates,rotates)
+        draw(points,indices,translates,rotates)
         
     end
     
