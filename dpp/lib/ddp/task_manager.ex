@@ -1,6 +1,10 @@
 defmodule TaskManager do
 
-    # TODO1: Need to make it so that the impot is the LIST format, funtion to distribute and also an empty list format
+    @moduledoc """
+    Task manager server that can distribute tasks to servers.
+    # TODO1: Need to make it so that the import is the LIST format, funtion to distribute
+    """
+    
 
 
     use GenServer
@@ -39,10 +43,9 @@ defmodule TaskManager do
     end
 
     @doc """
-        Remove all tasks to TaskManager.
-        !!!!TODO
+        Remove all tasks from TaskManager.
     ## Examples
-        TaskManager.add_task(tasks)
+        TaskManager.remove_all_tasks()
     """
     @spec remove_all_tasks() :: None
     def remove_all_tasks() do
