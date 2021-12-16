@@ -1,4 +1,8 @@
 defmodule TaskManager do
+
+    # TODO1: Need to make it so that the impot is the LIST format, funtion to distribute and also an empty list format
+
+
     use GenServer
 
     def start_link(collision_data) do
@@ -17,9 +21,18 @@ defmodule TaskManager do
         GenServer.call({:global, :task_manager}, {:get_result})
     end
 
+    def add_task(collision_data) do
+        GenServer.cast({:global, :task_manager},{:add_task, collision_data})
+    end
+
     @impl true
     def init(collision_data) do
         {:ok, {collision_data, Map.new(), MapSet.new(),Map.new()}}
+    end
+
+    @impl true
+    def handle_cast({:add_task, new_collision_data}, {collision_data, pending, done_tasks, results}) do
+        {:noreply, {List.flatten([new_collision_data | collision_data]), pending, done_tasks, results}}
     end
 
     @impl true
@@ -58,7 +71,9 @@ defmodule TaskManager do
     if Enum.empty?(pending) do
       pending # Nothing to do
     else
-      {task_id, prev_task} ={Enum.at(Map.keys(pending),0), Enum.at(Map.values(pending),0)}
+    #TODO: this empty LIST need to be a argument impot!!!!!
+      empty_task = %{point1: [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0], indice1: [0,1,2], translate1: [0.0,0.0,0.0], rotate1: [0.0,0.0,0.0,0.0], point2: [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0], indice2: [0,1,2], translate2: [0.0,0.0,0.0], rotate2: [0.0,0.0,0.0,0.0], margin: 0.1}
+      {task_id, prev_task} ={:empty_task, empty_task}
       Collision.Detector.Server.send_result(pid, task_id, prev_task)
       Map.put(Map.delete(pending, task_id), task_id, prev_task)
     end

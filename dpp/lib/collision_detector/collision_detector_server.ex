@@ -22,10 +22,17 @@ defmodule Collision.Detector.Server do
         TaskManager.request_task(self())
 ## add code here
 ##
-        :timer.sleep(1)
-        #IO.puts "sdasdasd2222222222222222222222222222222222222222222222222222222222"
-        TaskManager.recieve_result(task_id, task)
-        {:noreply, state}
+        if task_id==:empty_task do
+          #IO.puts "Empty"
+          {:noreply, state}
+        else
+          result = Distributor.Server.test_fun(task)
+          #:timer.sleep(1)
+          IO.inspect task_id
+        
+          TaskManager.recieve_result(task_id, result)
+          {:noreply, state}
+        end
     end
 
 end
