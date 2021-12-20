@@ -7,7 +7,9 @@ defmodule Robot.Utils do
     alias ELA.Matrix, as: Matrix
     alias ELA.Vector, as: Vector
     
-    
+    @doc """
+    Convert axis angle to transform matrix
+    """
     def matrixFromAxisAngle(axis_angle,translate) do
         angle = Enum.at(axis_angle, 3)
         x = Enum.at(axis_angle, 0)
@@ -37,6 +39,9 @@ defmodule Robot.Utils do
                   [0.0,   0.0,   0.0,   1.0]]
     end
 
+    @doc """
+    Convert transform matrix to axis angle
+    """
     def axisAngleFromMatrix(matrix) do
         [[m00, m01, m02, m03],
          [m10, m11, m12, m13],
